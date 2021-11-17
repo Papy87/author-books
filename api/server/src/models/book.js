@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define('book', {
+    const book = sequelize.define('book', {
         id: {
             type: DataTypes.INTEGER,
             allowNull: false,
@@ -28,4 +28,9 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
         },
     });
+
+    book.associate = function (model) {
+        book.belongsTo(model.author, {foreignKey: 'authorId', targetKey: 'id'})
+    }
+    return book
 };

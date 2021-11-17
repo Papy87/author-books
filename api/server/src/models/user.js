@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define('user', {
+    const user = sequelize.define('user', {
         id: {
             type: DataTypes.INTEGER,
             allowNull: false,
@@ -20,4 +20,8 @@ module.exports = (sequelize, DataTypes) => {
             field: 'is_admin'
         }
     });
+    user.associate = function (model) {
+        user.hasOne(model.author, {foreignKey: 'userId', targetKey: 'id'})
+    }
+    return user
 };

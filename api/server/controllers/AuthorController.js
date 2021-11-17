@@ -4,8 +4,11 @@ const util = new Utils();
 
 class AuthorController {
     static async getAllAuthors(req, res) {
+        const {page, pageSize} = req.query;
+        const offset = parseInt(page) * parseInt(pageSize);
+        const limit = parseInt(pageSize);
         try {
-            const allAuthors = await AuthorService.getAllAuthors();
+            const allAuthors = await AuthorService.getAllAuthors(limit,offset);
             if (allAuthors.length > 0) {
                 util.setSuccess(200, 'Authors retrieved', allAuthors);
             } else {
@@ -31,11 +34,11 @@ class AuthorController {
                 return util.send(res);
             }
             const createAuthor = await AuthorService.addAuthor(firstName, lastName, email, password);
-           if(createAuthor){
-               util.setSuccess(201, 'Author Added!', createAuthor);
-           }else{
-               util.setError(400, 'Author not added.');
-           }
+            if (createAuthor) {
+                util.setSuccess(201, 'Author Added!', createAuthor);
+            } else {
+                util.setError(400, 'Author not added.');
+            }
             return util.send(res);
         } catch (error) {
             util.setError(400, error.message);
@@ -66,19 +69,17 @@ class AuthorController {
 
     static async getAuthor(req, res) {
         const {id} = req.params;
-
         if (!Number(id)) {
             util.setError(400, 'Please input a valid numeric value');
             return util.send(res);
         }
 
         try {
-            const theBook = await BookService.getABook(id);
-
-            if (!theBook) {
-                util.setError(404, `Cannot find book with the id ${id}`);
+            const theAuthor = await AuthorService.getAuthor(id);
+            if (!theAuthor) {
+                util.setError(404, `Cannot find author with the id ${id}`);
             } else {
-                util.setSuccess(200, 'Found Book', theBook);
+                util.setSuccess(200, 'Found Author', theAuthor);
             }
             return util.send(res);
         } catch (error) {
@@ -96,12 +97,12 @@ class AuthorController {
         }
 
         try {
-            const bookToDelete = await BookService.deleteBook(id);
+            const authorToDelete = await AuthorService.deleteAuthor(id);
 
-            if (bookToDelete) {
-                util.setSuccess(200, 'Book deleted');
+            if (authorToDelete) {
+                util.setSuccess(200, 'Author deleted');
             } else {
-                util.setError(404, `Book with the id ${id} cannot be found`);
+                util.setError(404, `Author with the id ${id} cannot be found`);
             }
             return util.send(res);
         } catch (error) {

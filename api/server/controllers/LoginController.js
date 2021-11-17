@@ -17,19 +17,22 @@ class LoginController {
         }
         try {
             const user = await LoginService.login(email);
+            console.log(user)
             if(!user){
                 util.setError(400, "Wrong Email");
                 return util.send(res);
             }
-            let passwordCheck= await bcrypt.compare(password,user.dataValues.password);
+            let passwordCheck= await bcrypt.compare(password,user.password);
             if(!passwordCheck){
                 util.setError(400, "Wrong password");
                 return util.send(res);
             }
+
             let token= jwt.sign(
                 {
-                    userId: user.dataValues.id,
-                    isAdmin: user.dataValues.isAdmin,
+                    userId: user.id,
+                    isAdmin: user.isAdmin,
+                    authorId:user['author.id']
                 },DB_SECRET, {expiresIn: '24h'}
             )
             util.setSuccess(200, 'User login successful.',{token});

@@ -1,11 +1,16 @@
 const BookService = require('../services/BookService');
 const Utils = require('../utils/Util');
+const jwtDecode = require('jwt-decode');
+
 const util = new Utils();
 
 class BookController {
-    static async getAllBooks(req, res) {
+    static async getAllAuthorsAndBooks(req, res) {
+        const {page, pageSize} = req.query;
+        const limit = parseInt(pageSize);
+        const offset = parseInt(page) * parseInt(pageSize);
         try {
-            const allBooks = await BookService.getAllBooks();
+            const allBooks = await BookService.getAllBooks(limit,offset);
             if (allBooks.length > 0) {
                 util.setSuccess(200, 'Books retrieved', allBooks);
             } else {
@@ -19,14 +24,14 @@ class BookController {
     }
 
     static async addBook(req, res) {
-        let {title, description} = req.body;
-        if (title || description) {
+        let {authorId} = jwtDecode(req.headers.authorization.slice(6));
+        let {title, description, genre} = req.body;
+        if (!title || !description || !genre) {
             util.setError(400, 'Please provide complete details');
             return util.send(res);
         }
-        const newBook = req.body;
         try {
-            const createdBook = await BookService.addBook(newBook);
+            const createdBook = await BookService.addBook(title, description, genre, authorId);
             util.setSuccess(201, 'Book Added!', createdBook);
             return util.send(res);
         } catch (error) {

@@ -2,13 +2,20 @@ const database = require('../src/models/initialize-sequlize');
 const bcrypt = require('bcrypt');
 
 class AuthorService {
-    static async getAllAuthors() {
+    static async getAllAuthors(limit, offset) {
         try {
-            return await database.author.findAll();
+            return await database.author.findAll({
+                include: [
+                    {model: database.book, attributes: ['title', 'id']}
+                ],
+                order: [['lastName', 'DESC']],
+                limit,
+                offset
+            });
         } catch (error) {
             throw error;
         }
-    }
+    };
 
     static async addAuthor(firstName, lastName, email, password) {
         let hashPassword = await bcrypt.hash(password, 10);
@@ -30,7 +37,7 @@ class AuthorService {
         } catch (error) {
             throw error;
         }
-    }
+    };
 
     static async updateAuthor(id, updateAuthor) {
         try {
@@ -46,32 +53,38 @@ class AuthorService {
         } catch (error) {
             throw error;
         }
-    }
+    };
 
     static async getAuthor(id) {
         try {
             return await database.author.findOne({
-                where: {id: Number(id)}
+                where: {id: Number(id)},
+                include: [
+                    {model: database.book, attributes: ['title', 'id','genre']}
+                ],
             });
         } catch (error) {
             throw error;
         }
-    }
+    };
 
     static async deleteAuthor(id) {
         try {
-            const authorToDelete = await database.author.findOne({where: {id: Number(id)}});
-
+            const authorToDelete = await database.author.findOne({where: {id: Number(id)}, raw: true});
             if (authorToDelete) {
-                return await database.author.destroy({
-                    where: {id: Number(id)}
-                });
+                return database.sequelize.transaction(async t => {
+                    await database.book.destroy({where: {authorId: Number(id)}, transaction: t})
+                    await database.user.destroy({where: {id: authorToDelete.userId}, transaction: t})
+                    return await database.author.destroy({
+                        where: {id: Number(id)}, transaction: t
+                    });
+                })
             }
             return null;
         } catch (error) {
             throw error;
         }
-    }
+    };
 
     static async emailCheck(email) {
         try {
@@ -82,7 +95,6 @@ class AuthorService {
             throw error;
         }
     }
-
 }
 
 module.exports = AuthorService;
