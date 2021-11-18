@@ -5,7 +5,7 @@ const jwtDecode = require('jwt-decode');
 const util = new Utils();
 
 class BookController {
-    static async getAllAuthorsAndBooks(req, res) {
+    static async getAllBooks(req, res) {
         const {page, pageSize} = req.query;
         const limit = parseInt(pageSize);
         const offset = parseInt(page) * parseInt(pageSize);

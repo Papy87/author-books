@@ -1,14 +1,16 @@
 const AuthorService = require('../services/AuthorService');
 const Utils = require('../utils/Util');
+const jwtDecode = require("jwt-decode");
 const util = new Utils();
 
 class AuthorController {
     static async getAllAuthors(req, res) {
         const {page, pageSize} = req.query;
+        let {authorId} = jwtDecode(req.headers.authorization.slice(6));
         const offset = parseInt(page) * parseInt(pageSize);
         const limit = parseInt(pageSize);
         try {
-            const allAuthors = await AuthorService.getAllAuthors(limit,offset);
+            const allAuthors = await AuthorService.getAllAuthors(limit,offset,authorId);
             if (allAuthors.length > 0) {
                 util.setSuccess(200, 'Authors retrieved', allAuthors);
             } else {
@@ -22,18 +24,23 @@ class AuthorController {
     }
 
     static async addAuthor(req, res) {
-        let {firstName, lastName, email, password} = req.body;
-        if (!firstName || !lastName || !email || !password) {
+        let {firstName, lastName, email, password,username} = req.body;
+        if (!firstName || !lastName || !email || !password||!username) {
             util.setError(400, 'Please provide complete details');
             return util.send(res);
         }
         try {
-            const emailCheck = await AuthorService.emailCheck(email);
+            const emailCheck = await AuthorService.emailCheck(email.toLowerCase());
             if (emailCheck) {
                 util.setError(400, 'Email must be unique.');
                 return util.send(res);
             }
-            const createAuthor = await AuthorService.addAuthor(firstName, lastName, email, password);
+            const usernameCheck = await AuthorService.userNameCheck(username.toLowerCase());
+            if (usernameCheck) {
+                util.setError(400, 'Username must be unique.');
+                return util.send(res);
+            }
+            const createAuthor = await AuthorService.addAuthor(firstName.toLowerCase(), lastName.toLowerCase(), email.toLowerCase(), password,username.toLowerCase());
             if (createAuthor) {
                 util.setSuccess(201, 'Author Added!', createAuthor);
             } else {

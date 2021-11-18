@@ -3,35 +3,11 @@ const path = require('path');
 const Sequelize = require('sequelize');
 const basename = path.basename(__filename);
 const db = {};
-let dbConnection = new Sequelize(
-    'books',
-    'postgres',
-    '312205', {
-        host: '127.0.0.1',
-        port: '5432',
-        dialect: 'postgres',
-        define: {
-            timestamps: false,
-            freezeTableName: true
-        },
-        dialectOption: {
-            ssl: false,
-            native: true
-        },
-        logging: false
-
-    }
-);
-
+const {DB_CONFIG} = require('../config/config')
+let dbConnection = new Sequelize(DB_CONFIG.development);
 dbConnection.authenticate()
-    .then(
-        () => {
-            console.log('Connection has been established successfully.');
-        }
-    ).catch(error => {
-    console.error('Unable to connect to the database:', error);
-})
-
+    .then(() => console.log('Connection has been established successfully.'))
+    .catch(error => console.error('Unable to connect to the database:', error.toString()))
 fs.readdirSync(__dirname)
     .filter((file) => {
         return (file.indexOf('.') !== 0) &&
@@ -41,7 +17,6 @@ fs.readdirSync(__dirname)
         const model = require(path.join(__dirname, file))(dbConnection, Sequelize);
         db[model.name] = model;
     });
-
 Object.keys(db).forEach((modelName) => {
     if (db[modelName].associate) {
         db[modelName].associate(db);

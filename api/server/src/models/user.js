@@ -18,7 +18,12 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BOOLEAN,
             allowNull: false,
             field: 'is_admin'
-        }
+        },
+        username: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            unique: true,
+        },
     });
     user.associate = function (model) {
         user.hasOne(model.author, {foreignKey: 'userId', targetKey: 'id'})

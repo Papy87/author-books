@@ -1,10 +1,10 @@
 const database = require('../src/models/initialize-sequlize')
 
 class LoginService {
-    static async login(email) {
+    static async login(username) {
         try {
             return await database.user.findOne({
-                where: {email},
+                where: {username},
                 raw: true,
                 include: [
                     {model: database.author,
