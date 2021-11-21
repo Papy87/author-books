@@ -4,7 +4,7 @@ const BookController = require('../controllers/BookController');
 const guard = require('../middleware/is_admin');
 
 
-router.get('/books', guard(false), BookController.getAllBooks);
+router.get('/books', guard(false), BookController.getAllBooksForUser);
 router.post('/book', guard(false), BookController.addBook);
 router.get('/book/:id', guard(false), BookController.getABook);
 router.put('/book/:id', guard(false), BookController.updatedBook);

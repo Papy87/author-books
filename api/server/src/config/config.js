@@ -3,7 +3,7 @@ const DB_CONFIG = {
     development: {
         database: 'books',
         username: 'postgres',
-        password: '312205',
+        password: '3122059701',
         host: '127.0.0.1',
         port: '5432',
         dialect: 'postgres',
@@ -30,4 +30,4 @@ const DB_SECRET = "HMeuwN4kLhYI5UXa39w5WU.EK?3j=ihY!LDZALUc8bqi.=Djak3Xqu6Z4zgr3
 module.exports = {
     DB_CONFIG,
     DB_SECRET
-}
+};

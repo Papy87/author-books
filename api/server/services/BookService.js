@@ -1,21 +1,23 @@
 const database = require('../src/models/initialize-sequlize')
 
 class BookService {
-    static async getAllBooks(limit,offset) {
-
+    static async getAllBooks(limit, offset, authorId) {
         try {
-            return await database.book.findAll({
+            return await database.book.findAndCountAll({
+                where: {
+                    author_id: Number(authorId)
+                },
                 include:
                     [{
                         model: database.author,
                         attributes: [['first_name', 'firstName'], ['last_name', 'lastName']]
                     }],
-                order:[
+                order: [
                     [
-                     'title','ASC'
+                        'title', 'ASC'
                     ]
                 ],
-                limit,offset
+                limit, offset
             });
         } catch (error) {
             throw error;

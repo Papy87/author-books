@@ -11,7 +11,7 @@ class AuthorService {
             }
         }
         try {
-            return await database.author.findAll({
+            return await database.author.findAndCountAll({
                 where,
                 include: [
                     {model: database.book, attributes: ['title', 'id']}
@@ -113,6 +113,7 @@ class AuthorService {
             throw error;
         }
     }
+
     static async userNameCheck(username) {
         try {
             const authorUsername = await database.user.findOne({where: {username}});

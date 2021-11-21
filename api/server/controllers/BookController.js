@@ -5,17 +5,14 @@ const jwtDecode = require('jwt-decode');
 const util = new Utils();
 
 class BookController {
-    static async getAllBooks(req, res) {
-        const {page, pageSize} = req.query;
+    static async getAllBooksForUser(req, res) {
+        const {page, pageSize, authorId} = req.query;
+        console.log(req.query);
         const limit = parseInt(pageSize);
         const offset = parseInt(page) * parseInt(pageSize);
         try {
-            const allBooks = await BookService.getAllBooks(limit,offset);
-            if (allBooks.length > 0) {
-                util.setSuccess(200, 'Books retrieved', allBooks);
-            } else {
-                util.setSuccess(200, 'No book found');
-            }
+            const allBooks = await BookService.getAllBooks(limit, offset, authorId);
+            util.setSuccess(200, 'Search result.', allBooks);
             return util.send(res);
         } catch (error) {
             util.setError(400, error);

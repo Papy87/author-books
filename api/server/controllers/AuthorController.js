@@ -10,12 +10,9 @@ class AuthorController {
         const offset = parseInt(page) * parseInt(pageSize);
         const limit = parseInt(pageSize);
         try {
-            const allAuthors = await AuthorService.getAllAuthors(limit,offset,authorId);
-            if (allAuthors.length > 0) {
-                util.setSuccess(200, 'Authors retrieved', allAuthors);
-            } else {
-                util.setSuccess(404, 'No author found');
-            }
+            const allAuthors = await AuthorService.getAllAuthors(limit, offset, authorId);
+            util.setSuccess(200, 'Search Result', allAuthors);
+
             return util.send(res);
         } catch (error) {
             util.setError(400, error);
@@ -24,8 +21,8 @@ class AuthorController {
     }
 
     static async addAuthor(req, res) {
-        let {firstName, lastName, email, password,username} = req.body;
-        if (!firstName || !lastName || !email || !password||!username) {
+        let {firstName, lastName, email, password, username} = req.body;
+        if (!firstName || !lastName || !email || !password || !username) {
             util.setError(400, 'Please provide complete details');
             return util.send(res);
         }
@@ -40,7 +37,7 @@ class AuthorController {
                 util.setError(400, 'Username must be unique.');
                 return util.send(res);
             }
-            const createAuthor = await AuthorService.addAuthor(firstName.toLowerCase(), lastName.toLowerCase(), email.toLowerCase(), password,username.toLowerCase());
+            const createAuthor = await AuthorService.addAuthor(firstName.toLowerCase(), lastName.toLowerCase(), email.toLowerCase(), password, username.toLowerCase());
             if (createAuthor) {
                 util.setSuccess(201, 'Author Added!', createAuthor);
             } else {
