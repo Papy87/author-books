@@ -7,7 +7,6 @@ const util = new Utils();
 class BookController {
     static async getAllBooksForUser(req, res) {
         const {page, pageSize, authorId} = req.query;
-        console.log(req.query);
         const limit = parseInt(pageSize);
         const offset = parseInt(page) * parseInt(pageSize);
         try {

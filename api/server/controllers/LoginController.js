@@ -3,8 +3,10 @@ const AuthorService = require('../services/AuthorService');
 const Utils = require('../utils/Util');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-let {DB_SECRET} = require('../src/config/config');
+const dotenv = require('dotenv');
+dotenv.config();
 const util = new Utils();
+
 
 class LoginController {
     static async login(req, res) {
@@ -31,7 +33,7 @@ class LoginController {
                     userId: user.id,
                     isAdmin: user.isAdmin,
                     authorId: user['author.id']
-                }, DB_SECRET, {expiresIn: '24h'}
+                }, process.env.DB_SECRET, {expiresIn: '24h'}
             )
             util.setSuccess(200, 'User login successful.', {token});
             return util.send(res);
@@ -44,7 +46,7 @@ class LoginController {
     static async register(req, res) {
         let {username,email, password} = req.body;
         if (!username || !email || !password) {
-            util.setSuccess(400, 'Please enter the necessary information.');
+            util.setSuccess(400, 'Please enter the necessary information.',{});
             return util.send(res);
         }
         try {

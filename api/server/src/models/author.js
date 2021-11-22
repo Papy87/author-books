@@ -16,6 +16,10 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             field: 'last_name'
         },
+        email: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
         userId: {
             type: DataTypes.INTEGER,
             allowNull: false,
@@ -23,8 +27,12 @@ module.exports = (sequelize, DataTypes) => {
             references: {
                 model: 'user',
                 key: 'id'
-            }
-
+            },
+        },
+        createdAt: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            field: 'created_at'
         }
     });
 

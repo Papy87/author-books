@@ -6,10 +6,7 @@ module.exports = (sequelize, DataTypes) => {
             primaryKey: true,
             autoIncrement: true
         },
-        email: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
+
         password: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -24,6 +21,11 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             unique: true,
         },
+        createdAt: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            field: 'created_at'
+        }
     });
     user.associate = function (model) {
         user.hasOne(model.author, {foreignKey: 'userId', targetKey: 'id'})

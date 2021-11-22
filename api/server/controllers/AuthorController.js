@@ -37,7 +37,7 @@ class AuthorController {
                 util.setError(400, 'Username must be unique.');
                 return util.send(res);
             }
-            const createAuthor = await AuthorService.addAuthor(firstName.toLowerCase(), lastName.toLowerCase(), email.toLowerCase(), password, username.toLowerCase());
+            const createAuthor = await AuthorService.addAuthor(firstName, lastName, email.toLowerCase(), password, username);
             if (createAuthor) {
                 util.setSuccess(201, 'Author Added!', createAuthor);
             } else {
@@ -52,6 +52,7 @@ class AuthorController {
 
     static async updatedAuthor(req, res) {
         const alterAuthor = req.body;
+        console.log()
         const {id} = req.params;
         if (!Number(id)) {
             util.setError(400, 'Please input a valid numeric value');

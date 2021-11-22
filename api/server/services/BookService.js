@@ -10,7 +10,7 @@ class BookService {
                 include:
                     [{
                         model: database.author,
-                        attributes: [['first_name', 'firstName'], ['last_name', 'lastName']]
+                        attributes: [['first_name', 'firstName'], ['last_name', 'lastName'],'email']
                     }],
                 order: [
                     [

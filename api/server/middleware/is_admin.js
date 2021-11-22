@@ -1,10 +1,11 @@
 const jwt = require('jsonwebtoken');
-let {DB_SECRET}=require('../src/config/config');
+const dotenv = require('dotenv');
+dotenv.config();
 
 const guard = (isAdmin) => {
     return (req, res, next) => {
         let token = req.headers.authorization.split(' ')[1];
-        let decodedToken = jwt.verify(token, DB_SECRET);
+        let decodedToken = jwt.verify(token, process.env.DB_SECRET);
         if (!req.headers.authorization) {
             return res.status(400).json({
                 message: 'Token no provided.'

@@ -1,6 +1,7 @@
 const database = require('../src/models/initialize-sequlize');
 const {Op} = require('sequelize');
 const bcrypt = require('bcrypt');
+const moment = require("moment");
 
 class AuthorService {
     static async getAllAuthors(limit, offset, authorId) {
@@ -29,18 +30,21 @@ class AuthorService {
     static
     async addAuthor(firstName, lastName, email, password, username) {
         let hashPassword = await bcrypt.hash(password, 10);
+        let createdAt=moment();
         try {
             return database.sequelize.transaction(async t => {
                 let user = await database.user.create({
-                    email,
                     password: hashPassword,
                     isAdmin: false,
-                    username
+                    username,
+                    createdAt
                 }, {transaction: t});
                 let authorData = {
                     firstName,
                     lastName,
                     userId: user.dataValues.id,
+                    email,
+                    createdAt
                 }
                 return await database.author.create(authorData, {transaction: t})
             })
@@ -106,7 +110,7 @@ class AuthorService {
 
     static async emailCheck(email) {
         try {
-            const authorEmail = await database.user.findOne({where: {email}});
+            const authorEmail = await database.author.findOne({where: {email}});
             return !!authorEmail;
 
         } catch (error) {
