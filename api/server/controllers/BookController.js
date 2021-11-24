@@ -6,11 +6,11 @@ const util = new Utils();
 
 class BookController {
     static async getAllBooksForUser(req, res) {
-        const {page, pageSize, authorId} = req.query;
+        const {page, pageSize, authorId,title} = req.query;
         const limit = parseInt(pageSize);
         const offset = parseInt(page) * parseInt(pageSize);
         try {
-            const allBooks = await BookService.getAllBooks(limit, offset, authorId);
+            const allBooks = await BookService.getAllBooks(limit, offset, authorId,title);
             util.setSuccess(200, 'Search result.', allBooks);
             return util.send(res);
         } catch (error) {

@@ -5,12 +5,12 @@ const util = new Utils();
 
 class AuthorController {
     static async getAllAuthors(req, res) {
-        const {page, pageSize} = req.query;
+        const {page, pageSize,name} = req.query;
         let {authorId} = jwtDecode(req.headers.authorization.slice(6));
         const offset = parseInt(page) * parseInt(pageSize);
         const limit = parseInt(pageSize);
         try {
-            const allAuthors = await AuthorService.getAllAuthors(limit, offset, authorId);
+            const allAuthors = await AuthorService.getAllAuthors(limit, offset, authorId,name);
             util.setSuccess(200, 'Search Result', allAuthors);
 
             return util.send(res);
@@ -21,8 +21,8 @@ class AuthorController {
     }
 
     static async addAuthor(req, res) {
-        let {firstName, lastName, email, password, username} = req.body;
-        if (!firstName || !lastName || !email || !password || !username) {
+        let {fullName, email, password, username} = req.body;
+        if (!fullName || !email || !password || !username) {
             util.setError(400, 'Please provide complete details');
             return util.send(res);
         }
@@ -37,7 +37,7 @@ class AuthorController {
                 util.setError(400, 'Username must be unique.');
                 return util.send(res);
             }
-            const createAuthor = await AuthorService.addAuthor(firstName, lastName, email.toLowerCase(), password, username);
+            const createAuthor = await AuthorService.addAuthor(fullName, email.toLowerCase(), password, username);
             if (createAuthor) {
                 util.setSuccess(201, 'Author Added!', createAuthor);
             } else {
@@ -52,7 +52,6 @@ class AuthorController {
 
     static async updatedAuthor(req, res) {
         const alterAuthor = req.body;
-        console.log()
         const {id} = req.params;
         if (!Number(id)) {
             util.setError(400, 'Please input a valid numeric value');
@@ -100,7 +99,6 @@ class AuthorController {
             util.setError(400, 'Please provide a numeric value');
             return util.send(res);
         }
-
         try {
             const authorToDelete = await AuthorService.deleteAuthor(id);
 

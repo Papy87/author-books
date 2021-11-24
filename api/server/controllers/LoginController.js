@@ -44,8 +44,8 @@ class LoginController {
     }
 
     static async register(req, res) {
-        let {username,email, password} = req.body;
-        if (!username || !email || !password) {
+        let {username, password} = req.body;
+        if (!username  || !password) {
             util.setSuccess(400, 'Please enter the necessary information.',{});
             return util.send(res);
         }
@@ -55,13 +55,8 @@ class LoginController {
                 util.setSuccess(400, 'Username must be unique.');
                 return util.send(res);
             }
-            let userEmailChek = await AuthorService.emailCheck(email);
-            if (userEmailChek) {
-                util.setSuccess(400, 'Email must be unique.');
-                return util.send(res);
-            }
             let hashPassword = await bcrypt.hash(password, 10);
-            let userData = {username,email, password: hashPassword, isAdmin: true};
+            let userData = {username, password: hashPassword, isAdmin: true};
             const registration = await LoginService.register(userData)
             if (registration) {
                 util.setSuccess(200, 'User registration successful.');

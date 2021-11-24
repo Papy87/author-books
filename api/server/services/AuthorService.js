@@ -1,15 +1,28 @@
 const database = require('../src/models/initialize-sequlize');
-const {Op} = require('sequelize');
+const {Op, Sequelize} = require('sequelize');
 const bcrypt = require('bcrypt');
 const moment = require("moment");
 
 class AuthorService {
-    static async getAllAuthors(limit, offset, authorId) {
+    static async getAllAuthors(limit, offset, authorId, name) {
         let where = {};
         if (authorId) {
             where.id = {
                 [Op.ne]: authorId
             }
+        }
+        if (name.length) {
+            let tokens = name.split(' ');
+            let nameTokensArray = [];
+            tokens.forEach((token) => {
+                let tokenObject = {
+                    [Op.iLike]: '%' + token.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/Đ/g, "D").replace(/đ/g, "d") + '%'
+                };
+                nameTokensArray.push(tokenObject)
+            })
+            where.fullName = Sequelize.where(Sequelize.fn('unaccent', Sequelize.col('full_name')), {
+                [Op.and]: [...nameTokensArray]
+            })
         }
         try {
             return await database.author.findAndCountAll({
@@ -17,7 +30,7 @@ class AuthorService {
                 include: [
                     {model: database.book, attributes: ['title', 'id']}
                 ],
-                order: [['lastName', 'DESC']],
+                order: [['fullName', 'DESC']],
                 limit,
                 offset
             });
@@ -27,10 +40,9 @@ class AuthorService {
     }
     ;
 
-    static
-    async addAuthor(firstName, lastName, email, password, username) {
+    static async addAuthor(fullName, email, password, username) {
         let hashPassword = await bcrypt.hash(password, 10);
-        let createdAt=moment();
+        let createdAt = moment();
         try {
             return database.sequelize.transaction(async t => {
                 let user = await database.user.create({
@@ -40,8 +52,7 @@ class AuthorService {
                     createdAt
                 }, {transaction: t});
                 let authorData = {
-                    firstName,
-                    lastName,
+                    fullName,
                     userId: user.dataValues.id,
                     email,
                     createdAt

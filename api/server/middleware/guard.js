@@ -1,20 +1,20 @@
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
-const Util = require("../utils/Util");
+const Utils = require("../utils/Util");
 dotenv.config();
-const util = new Util;
+const util = new Utils();
 
-const isAdmin = (isAdmin) => {
+
+const guard = () => {
     return (req, res, next) => {
         let token = req.headers.authorization.split(' ')[1];
-        if (!req.headers.authorization) {
+        if (!token) {
             util.setError(400, 'Token no provided.')
             return util.setSuccess(res)
         }
-        let decodedToken = jwt.verify(token, process.env.DB_SECRET);
-
-        if (isAdmin && !decodedToken.isAdmin) {
-            util.setError(403, 'Forbidden.')
+        let verifyToken = jwt.verify(token, process.env.DB_SECRET);
+        if (!verifyToken) {
+            util.setError(400, 'Bad token')
             return util.setSuccess(res)
         } else {
             next()
@@ -23,4 +23,4 @@ const isAdmin = (isAdmin) => {
 };
 
 
-module.exports = isAdmin;
+module.exports = guard;
