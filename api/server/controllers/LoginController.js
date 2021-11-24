@@ -26,7 +26,6 @@ class LoginController {
                 util.setError(400, "Wrong password");
                 return util.send(res);
             }
-
             let token = jwt.sign(
                 {
                     username: user.username,
@@ -38,7 +37,7 @@ class LoginController {
             util.setSuccess(200, 'User login successful.', {token});
             return util.send(res);
         } catch (error) {
-            util.setError(400, error);
+            util.setError(400, error.message);
             return util.send(res);
         }
     }

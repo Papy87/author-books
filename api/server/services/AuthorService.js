@@ -59,20 +59,16 @@ class AuthorService {
                 }
                 return await database.author.create(authorData, {transaction: t})
             })
-
         } catch (error) {
             throw error;
         }
-    }
-    ;
+    };
 
-    static
-    async updateAuthor(id, updateAuthor) {
+    static async updateAuthor(id, updateAuthor) {
         try {
             const authorToUpdate = await database.author.findOne({
                 where: {id: Number(id)}
             });
-
             if (authorToUpdate) {
                 await database.author.update(updateAuthor, {where: {id: Number(id)}});
                 return updateAuthor;
@@ -84,8 +80,7 @@ class AuthorService {
     }
     ;
 
-    static
-    async getAuthor(id) {
+    static async getAuthor(id) {
         try {
             return await database.author.findOne({
                 where: {id: Number(id)},
@@ -99,8 +94,7 @@ class AuthorService {
     }
     ;
 
-    static
-    async deleteAuthor(id) {
+    static async deleteAuthor(id) {
         try {
             const authorToDelete = await database.author.findOne({where: {id: Number(id)}, raw: true});
             if (authorToDelete) {

@@ -12,7 +12,6 @@ const isAdmin = (isAdmin) => {
             return util.setSuccess(res)
         }
         let decodedToken = jwt.verify(token, process.env.DB_SECRET);
-
         if (isAdmin && !decodedToken.isAdmin) {
             util.setError(403, 'Forbidden.')
             return util.setSuccess(res)

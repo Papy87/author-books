@@ -59,7 +59,6 @@ class BookController {
 
     static async getABook(req, res) {
         const {id} = req.params;
-
         if (!Number(id)) {
             util.setError(400, 'Please input a valid numeric value');
             return util.send(res);
@@ -82,12 +81,10 @@ class BookController {
 
     static async deleteBook(req, res) {
         const {id} = req.params;
-
         if (!Number(id)) {
             util.setError(400, 'Please provide a numeric value');
             return util.send(res);
         }
-
         try {
             const bookToDelete = await BookService.deleteBook(id);
 

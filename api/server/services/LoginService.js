@@ -3,15 +3,9 @@ const moment = require("moment");
 class LoginService {
     static async login(username) {
         try {
-            return await database.user.findOne({
-                where: {username},
+            return await database.user.findOne({where: {username},
                 raw: true,
-                include: [
-                    {
-                        model: database.author,
-                        attributes: ['id']
-                    }
-                ]
+                include: [{model: database.author, attributes: ['id']}]
             });
         } catch (error) {
             throw error;

@@ -12,10 +12,9 @@ class AuthorController {
         try {
             const allAuthors = await AuthorService.getAllAuthors(limit, offset, authorId,name);
             util.setSuccess(200, 'Search Result', allAuthors);
-
             return util.send(res);
         } catch (error) {
-            util.setError(400, error);
+            util.setError(400, error.message);
             return util.send(res);
         }
     }
@@ -66,7 +65,7 @@ class AuthorController {
             }
             return util.send(res);
         } catch (error) {
-            util.setError(404, error);
+            util.setError(404, error.message);
             return util.send(res);
         }
     }
@@ -77,7 +76,6 @@ class AuthorController {
             util.setError(400, 'Please input a valid numeric value');
             return util.send(res);
         }
-
         try {
             const theAuthor = await AuthorService.getAuthor(id);
             if (!theAuthor) {
@@ -87,14 +85,13 @@ class AuthorController {
             }
             return util.send(res);
         } catch (error) {
-            util.setError(404, error);
+            util.setError(404, error.message);
             return util.send(res);
         }
     }
 
     static async deleteAuthor(req, res) {
         const {id} = req.params;
-
         if (!Number(id)) {
             util.setError(400, 'Please provide a numeric value');
             return util.send(res);
@@ -109,7 +106,7 @@ class AuthorController {
             }
             return util.send(res);
         } catch (error) {
-            util.setError(400, error);
+            util.setError(400, error.message);
             return util.send(res);
         }
     }

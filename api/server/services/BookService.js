@@ -22,17 +22,9 @@ class BookService {
                     [Op.and]: [...titleTokensArray]
                 })
             }
-            return await database.book.findAndCountAll({
-                where,
-                include:
-                    [{
-                        model: database.author,
-                    }],
-                order: [
-                    [
-                        'title', 'ASC'
-                    ]
-                ],
+            return await database.book.findAndCountAll({where,
+                include: [{model: database.author,}],
+                order: [['title', 'ASC']],
                 limit, offset
             });
         } catch (error) {
@@ -49,14 +41,9 @@ class BookService {
         }
     }
 
-    static
-    async updateBook(id, updateBook) {
+    static async updateBook(id, updateBook) {
         try {
-            const bookToUpdate = await database.book.findOne({
-                where: {
-                    id: Number(id)
-                }
-            });
+            const bookToUpdate = await database.book.findOne({where: {id: Number(id)}});
             if (bookToUpdate) {
                 await database.book.update(updateBook, {where: {id: Number(id)}});
                 return updateBook;
@@ -67,16 +54,11 @@ class BookService {
         }
     }
 
-    static
-    async getABook(id) {
+    static async getABook(id) {
         try {
             return await database.book.findOne({
                 where: {id: Number(id)},
-                include:
-                    [{
-                        model: database.author,
-                    }]
-            });
+                include: [{model: database.author}]});
         } catch (error) {
             throw error;
         }
@@ -87,9 +69,7 @@ class BookService {
         try {
             const bookToDelete = await database.book.findOne({where: {id: Number(id)}});
             if (bookToDelete) {
-                return await database.book.destroy({
-                    where: {id: Number(id)}
-                });
+                return await database.book.destroy({where: {id: Number(id)}});
             }
             return null;
         } catch (error) {
